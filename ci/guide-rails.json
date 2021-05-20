@@ -1,0 +1,124 @@
+{
+	"metadata": {
+		"version": 1
+	},
+	"application": {
+		"name": "arc-poc",
+		"language": "JAVA_GRADLE",
+		"artifact_store": {
+			"repositories": null
+		}
+	},
+	"pipeline": {
+		"segments": [
+			{
+				"name": "Build",
+				"segment_type": "build",
+				"publish_attributes": {
+					"publish": true,
+					"docker_attributes": {
+						"repository": "((application.name))",
+						"tags": [
+							"((application.version))"
+						],
+						"context": "",
+						"docker_file_path": ""
+					}
+				},
+				"exit_actions": {},
+				"properties": [
+					{
+						"name": "gradle.user.home",
+						"description": "GRADLE_USER_HOME is set to ${SEGMENT_BASE_DIR}/cache/.gradle by default, when caching is enabled. Caches are maintained on the worker where your build gets allocated. For a new worker assigned to the build, the cache will be re-created",
+						"value": "${SEGMENT_BASE_DIR}/cache/.gradle"
+					},
+					{
+						"name": "ivy.defaultCacheDir",
+						"description": "ivy cache directory is set to ${SEGMENT_BASE_DIR}/cache/.ivy by default, when caching is enabled. Caches are maintained on the worker where your build gets allocated. For a new worker assigned to the build, the cache will be re-created",
+						"value": "${SEGMENT_BASE_DIR}/cache/.ivy"
+					},
+					{
+						"name": "maven.repo.local",
+						"description": "maven local repository is set to ${SEGMENT_BASE_DIR}/cache/.m2 by default, when caching is enabled. Caches are maintained on the worker where your build gets allocated. For a new worker assigned to the build, the cache will be re-created",
+						"value": "${SEGMENT_BASE_DIR}/cache/.m2"
+					}
+				],
+				"deployment_strategy": {},
+				"application_init": {},
+				"packages": [
+					{
+						"name": "((application.name))",
+						"downloads": [],
+						"files": [
+							"((application.name))*"
+						]
+					}
+				],
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))"
+					}
+				],
+				"cache_info": {
+					"paths": [
+						"((gradle.user.home))",
+						"((ivy.defaultCacheDir))",
+						"((maven.repo.local))"
+					]
+				},
+				"tasks": [
+					{
+						"name": "arc-poc",
+						"steps": [
+							{
+								"name": "build",
+								"definition": "build",
+								"command": "gradle build",
+								"properties": null
+							},
+							{
+								"name": "prepareForDocker",
+								"definition": "prepareForDocker",
+								"command": "mkdir -p build/dependency\ncd build/dependency\njar -xvf ../libs/*.jar",
+								"properties": null
+							}
+						],
+						"docker_registry_alias_id": "81e5f42e-c451-41ad-62c0-b2f861b3a72f",
+						"docker_options": {
+							"repository": "library/gradle:jdk16"
+						}
+					}
+				]
+			}
+		],
+		"exit_actions": {},
+		"default_properties": [
+			{
+				"name": "AWS_ACCESS_KEY_ID",
+				"value": "AKIA347C3P4E4UKBARJI",
+				"type": "string"
+			},
+			{
+				"name": "AWS_SECRET_ACCESS_KEY",
+				"value": "secret:121ad8f4-add6-4ec0-5eab-230d7b37503b/7a4a0043-8a17-43db-40a4-28feb5f9fe6a/555983fc-fe0b-496a-57bd-397e028bb64e/534029d9-bb98-4ff8-7655-1b5b8c9cbcd9/AWS_SECRET_ACCESS_KEY",
+				"type": "string",
+				"secret": true,
+				"secret_path": "121ad8f4-add6-4ec0-5eab-230d7b37503b/7a4a0043-8a17-43db-40a4-28feb5f9fe6a/555983fc-fe0b-496a-57bd-397e028bb64e/534029d9-bb98-4ff8-7655-1b5b8c9cbcd9/AWS_SECRET_ACCESS_KEY"
+			}
+		],
+		"deployment_files": [],
+		"application_init": {
+			"command": "bin/start-service.sh"
+		},
+		"releases": [
+			{
+				"name": "consul",
+				"version": "latest"
+			}
+		]
+	},
+	"organization": {
+		"orgname": "GR-Product"
+	}
+}
