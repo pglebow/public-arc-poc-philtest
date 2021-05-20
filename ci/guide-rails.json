@@ -81,6 +81,191 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "Isolation",
+				"segment_type": "isolation",
+				"run_after": [
+					"Build"
+				],
+				"exit_actions": {},
+				"deployment_strategy": {
+					"canaries": 1,
+					"max_in_flight": 1,
+					"canary_watch_time": "5000-30000",
+					"update_watch_time": "5000-30000",
+					"serial": false
+				},
+				"application_init": {},
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))"
+					}
+				],
+				"instance_groups": [
+					{
+						"name": "((application.name))",
+						"number_of_instances": 1,
+						"cloud_provider_type": "aws",
+						"vm_type": "default",
+						"os_type": "default",
+						"networks": [
+							"isolation"
+						],
+						"availability_zones": [
+							"default"
+						],
+						"deployment_strategy": {},
+						"dependencies": [
+							{
+								"name": "consul",
+								"release": "consul",
+								"provides": [
+									{
+										"name": "consul_servers.as",
+										"value": "consul_1"
+									}
+								],
+								"consumes": [
+									{
+										"name": "consul_servers.from",
+										"value": "consul_1"
+									}
+								],
+								"properties": [
+									{
+										"name": "consul.servicename",
+										"value": "((consul.servicename))"
+									},
+									{
+										"name": "consul.environment",
+										"value": "((consul.environment))"
+									},
+									{
+										"name": "consul.datacenter",
+										"value": "((consul.datacenter))"
+									},
+									{
+										"name": "consul.server",
+										"value": "false"
+									},
+									{
+										"name": "consul.joinservers",
+										"value": "((consul.joinservers))"
+									},
+									{
+										"name": "calculi.intermediate.cert",
+										"value": "grsecret:tls.cert"
+									},
+									{
+										"name": "calculi.intermediate.key",
+										"value": "grsecret:tls.key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"k8s_instance_groups": [
+					{
+						"tool_config_alias_id": "c29b5819-2d06-4c04-552f-cac50c6689d9",
+						"name": "((application.name))",
+						"cluster_name": "",
+						"namespace": "((application.name))-((application.shortsha))",
+						"replicas": 1,
+						"containers": [
+							{
+								"name": "((application.name))",
+								"image": "((gr.dockerregistry.repo_url))/((application.name)):((application.version))",
+								"ports": [
+									{
+										"hostPort": 8080,
+										"containerPort": 8080,
+										"protocol": "TCP"
+									}
+								],
+								"resources": {},
+								"imagePullPolicy": "Always"
+							}
+						],
+						"autoscaling": {
+							"metadata": {
+								"creationTimestamp": null
+							},
+							"spec": {
+								"scaleTargetRef": {
+									"kind": "",
+									"name": ""
+								},
+								"minReplicas": 1,
+								"maxReplicas": 1,
+								"metrics": [
+									{
+										"type": "Resource",
+										"resource": {
+											"name": "cpu",
+											"target": {
+												"type": "AverageValue",
+												"averageValue": "70"
+											}
+										}
+									},
+									{
+										"type": "Resource",
+										"resource": {
+											"name": "memory",
+											"target": {
+												"type": "AverageValue",
+												"averageValue": "70"
+											}
+										}
+									}
+								]
+							},
+							"status": {
+								"currentReplicas": 0,
+								"desiredReplicas": 0,
+								"currentMetrics": null,
+								"conditions": null
+							}
+						},
+						"ingress_enabled": true,
+						"ingress": {
+							"metadata": {
+								"creationTimestamp": null
+							},
+							"spec": {
+								"rules": [
+									{
+										"host": "((application.name))-iso.calculi.io",
+										"http": {
+											"paths": [
+												{
+													"path": "/",
+													"backend": {
+														"servicePort": 8080
+													}
+												}
+											]
+										}
+									}
+								]
+							},
+							"status": {
+								"loadBalancer": {}
+							}
+						},
+						"dns_hosted_zone": "calculi.io",
+						"service_name": "((application.name))-((application.shortsha))",
+						"alb_ingress_controller_annotations": {
+							"alb.ingress.kubernetes.io/healthcheck-path": "/actuator/health",
+							"alb.ingress.kubernetes.io/healthcheck-port": "traffic-port",
+							"alb.ingress.kubernetes.io/scheme": "internet-facing"
+						}
+					}
+				],
+				"deployment_target": 2
 			}
 		],
 		"exit_actions": {},
@@ -101,7 +286,13 @@
 		"deployment_files": [],
 		"application_init": {
 			"command": "bin/start-service.sh"
-		}
+		},
+		"releases": [
+			{
+				"name": "consul",
+				"version": "latest"
+			}
+		]
 	},
 	"organization": {
 		"orgname": "GR-Product"
