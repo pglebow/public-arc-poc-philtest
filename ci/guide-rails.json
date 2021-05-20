@@ -88,6 +88,14 @@
 				"run_after": [
 					"Build"
 				],
+				"job_steps": [
+					{
+						"name": "testApp",
+						"definition": "testApp",
+						"command": "curl http://((application.name))-iso.calculi.io/actuator/health",
+						"properties": null
+					}
+				],
 				"exit_actions": {},
 				"deployment_strategy": {
 					"canaries": 1,
