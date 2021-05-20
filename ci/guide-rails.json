@@ -265,10 +265,23 @@
 						}
 					}
 				],
-				"deployment_target": 2
+				"deployment_target": 2,
+				"releases": [
+					{
+						"name": "consul",
+						"version": "latest"
+					}
+				]
 			}
 		],
-		"exit_actions": {},
+		"exit_actions": {
+			"default": {
+				"code_analysis": {
+					"publish": true,
+					"properties": null
+				}
+			}
+		},
 		"default_properties": [
 			{
 				"name": "AWS_ACCESS_KEY_ID",
@@ -286,13 +299,7 @@
 		"deployment_files": [],
 		"application_init": {
 			"command": "bin/start-service.sh"
-		},
-		"releases": [
-			{
-				"name": "consul",
-				"version": "latest"
-			}
-		]
+		}
 	},
 	"organization": {
 		"orgname": "GR-Product"
