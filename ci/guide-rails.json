@@ -65,7 +65,7 @@
 							{
 								"name": "build",
 								"definition": "build",
-								"command": "gradle build",
+								"command": "gradle build\n",
 								"properties": null
 							},
 							{
