@@ -21,7 +21,6 @@
 						"tags": [
 							"((application.version))"
 						],
-						"context": "",
 						"docker_file_path": ""
 					}
 				},
