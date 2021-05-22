@@ -193,6 +193,28 @@
 									}
 								],
 								"resources": {},
+								"livenessProbe": {
+									"httpGet": {
+										"path": "/actuator/health",
+										"port": 8080,
+										"scheme": "HTTP"
+									},
+									"initialDelaySeconds": 60,
+									"timeoutSeconds": 5,
+									"periodSeconds": 10,
+									"failureThreshold": 3
+								},
+								"readinessProbe": {
+									"httpGet": {
+										"path": "/actuator/health",
+										"port": 8080,
+										"scheme": "HTTP"
+									},
+									"initialDelaySeconds": 60,
+									"timeoutSeconds": 5,
+									"periodSeconds": 10,
+									"failureThreshold": 3
+								},
 								"imagePullPolicy": "Always"
 							}
 						],
@@ -224,7 +246,7 @@
 											"name": "memory",
 											"target": {
 												"type": "AverageValue",
-												"averageValue": "70"
+												"averageValue": "40"
 											}
 										}
 									}
@@ -249,7 +271,6 @@
 										"http": {
 											"paths": [
 												{
-													"path": "/",
 													"backend": {
 														"servicePort": 8080
 													}
@@ -268,7 +289,7 @@
 						"alb_ingress_controller_annotations": {
 							"alb.ingress.kubernetes.io/healthcheck-path": "/actuator/health",
 							"alb.ingress.kubernetes.io/healthcheck-port": "traffic-port",
-							"alb.ingress.kubernetes.io/scheme": "internet-facing"
+							"alb.ingress.kubernetes.io/scheme": "internal"
 						}
 					}
 				],
