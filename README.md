@@ -23,3 +23,9 @@ App to be deployed to AKS as a test of our migration practices
    - `docker build -t public-arc-poc-philtest .`
 9. Run using docker: `docker run -p 8080:8080 public-arc-poc-philtest`
 10. Test using `curl http://localhost:8080` or a browser
+
+## Publish to Docker Hub
+1. `docker tag public-arc-poc-philtest:latest pglebow/public-arc-poc-philtest:latest`
+1. `docker push pglebow/public-arc-poc-philtest:latest`
+1. `docker pull pglebow/public-arc-poc-philtest:latest`
+1. `docker run -p 8080:8080 pglebow/public-arc-poc-philtest:latest`
